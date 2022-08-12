@@ -276,6 +276,11 @@ auth_monitor(Port *port, int status)
 	if (status == STATUS_EOF)
 		return;
 
+	if (status == STATUS_OK) {
+		ereport(LOG, (errmsg("connection authorized: %s:%s user=%s identity=%s database=%s application=%s", port->remote_host, port->remote_port, port->user_name, port->authn_id, port->database_name, port->application_name)));
+		return;
+	}
+
 	key = get_role_oid((const char *) (port->user_name), true);
 	/*
 	 * A general case of failed attempt is when the status is not STATUS_OK.
